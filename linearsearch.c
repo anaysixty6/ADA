@@ -25,7 +25,7 @@ int main() {
         printf("Element not found in the array.\n");
     }
     t= clock()-t;
-    printf("%f", (float)t/CLOCKS_PER_SEC);
+    printf("No of clicks: %d, %f", t, (float)t/CLOCKS_PER_SEC);
         
     // Structure to store local time
     struct tm* ptr;
