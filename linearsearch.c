@@ -25,21 +25,12 @@ int main() {
         printf("Element not found in the array.\n");
     }
     t= clock()-t;
-    printf("%d", t/CLOCKS_PER_SECOND);
+    printf("%f", (float)t/CLOCKS_PER_SEC);
         
     // Structure to store local time
     struct tm* ptr;
     
     // Variable to store current time
-    time_t t;
     
-    // Get current time
-    t = time(NULL);
-    
-    // Convert it to local time
-    ptr = localtime(&t);
-    
-    // Get the string of local time
-    printf("%s", asctime(ptr));
     return 0;
 }
