@@ -32,7 +32,7 @@ Let `N` be the donor count, `M` the compatible and available candidates, and `k`
 | Stage | Method | Time | Extra space |
 | --- | --- | --- | --- |
 | Compatibility and availability | Linear scan | `O(N)` | `O(M)` |
-| Candidate ranking | Comparison sort | `O(M log M)` | `O(M)` |
+| Candidate ranking | Merge sort | `O(M log M)` | `O(M)` buffers and `O(log M)` recursion stack |
 | Greedy attempt | Take the first `k` ranked candidates | `O(k)` | `O(k)` |
 | Constraint fallback | Depth-first combination search | `O(2^M)` worst case | `O(M)` recursion and selection state |
 
@@ -48,7 +48,7 @@ Run `node benchmark.mjs` to recreate `results/benchmark.csv`. The script uses de
 - Unavailable compatible donor: exclude it.
 - Duplicate donor ID: reject the record.
 - Top `k` donors from one location with alternatives elsewhere: invoke backtracking and return a location-diverse set.
-- Fewer than `k` eligible donors: return the available set and state the shortfall.
+- Fewer than `k` distinct eligible locations: return a location-diverse partial set and state the shortfall.
 - Editing and deleting a donor: update counts and search results.
 - CSV export: include the current records and header row.
 
