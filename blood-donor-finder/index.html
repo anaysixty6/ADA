@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fff8f5" />
+  <title>BloodLink | Donor Finder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="BloodLink home"><span class="brand-mark">+</span><span>BloodLink</span></a>
+    <div class="topbar-note"><span class="live-dot"></span> ADA project demo <span class="divider">|</span> Browser-only sample data</div>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">BLOOD DONOR FINDER &amp; MANAGEMENT SYSTEM</p>
+        <h1>Find the right match,<br /><em>faster.</em></h1>
+        <p class="hero-copy">Organize donor records, rank compatible matches, and see how greedy selection and backtracking work.</p>
+      </div>
+      <div class="hero-aside"><span class="hero-icon">♥</span><span>For classroom demonstration<br /><b>Not a medical decision tool</b></span></div>
+    </section>
+
+    <section class="stats" aria-label="Donor summary">
+      <div class="stat"><span class="stat-label">REGISTERED DONORS</span><strong id="stat-total">—</strong><span class="stat-foot">sample and saved records</span></div>
+      <div class="stat"><span class="stat-label">AVAILABLE NOW</span><strong id="stat-available">—</strong><span class="stat-foot">marked available</span></div>
+      <div class="stat"><span class="stat-label">BLOOD TYPES</span><strong>8</strong><span class="stat-foot">ABO and Rh groups</span></div>
+      <div class="stat stat-highlight"><span class="stat-label">MATCHING METHOD</span><strong>Greedy +</strong><span class="stat-foot">backtracking fallback</span></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Project sections">
+      <button class="tab active" data-tab="finder" role="tab" aria-selected="true">Find donors</button>
+      <button class="tab" data-tab="records" role="tab" aria-selected="false">Manage records</button>
+      <button class="tab" data-tab="about" role="tab" aria-selected="false">How it works</button>
+    </nav>
+
+    <section id="panel-finder" class="panel tab-panel">
+      <div class="panel-heading"><div><p class="eyebrow">MATCH SEARCH</p><h2>Search compatible donors</h2></div><button id="reset-demo" class="text-button">Reset sample data</button></div>
+      <form id="search-form" class="search-controls">
+        <label>Required blood group<select id="required-group" required></select></label>
+        <label>Donors needed<input id="needed-count" type="number" min="1" max="10" value="2" required /></label>
+        <label>Rank by<select id="rank-by"><option value="distance">Closest first</option><option value="priority">Priority first</option><option value="id">Donor ID</option></select></label>
+        <button class="primary-button" type="submit">Find matches <span aria-hidden="true">→</span></button>
+      </form>
+      <label class="check-row"><input id="diversify" type="checkbox" checked /> Prefer one donor per location when possible</label>
+      <div id="search-summary" class="search-summary" aria-live="polite">Choose a required blood group to begin.</div>
+      <div id="results" class="results-empty"><div class="empty-icon">⌕</div><h3>Your results will appear here</h3><p>Available compatible donors are ranked by your selected priority.</p></div>
+      <div id="algorithm-note" class="algorithm-note hidden"></div>
+    </section>
+
+    <section id="panel-records" class="panel tab-panel hidden">
+      <div class="panel-heading"><div><p class="eyebrow">DONOR DIRECTORY</p><h2>Manage donor records</h2></div><button id="export-csv" class="secondary-button">Export CSV</button></div>
+      <form id="donor-form" class="record-form">
+        <input type="hidden" id="edit-id" />
+        <label>Donor ID<input id="donor-id" placeholder="e.g. D201" required maxlength="12" /></label>
+        <label>Name<input id="donor-name" placeholder="Demo donor" required maxlength="60" /></label>
+        <label>Contact (optional)<input id="donor-contact" placeholder="Use fictional demo data" maxlength="40" /></label>
+        <label>Blood group<select id="donor-group" required></select></label>
+        <label>Location<input id="donor-location" placeholder="North" required maxlength="40" /></label>
+        <label>Distance (km)<input id="donor-distance" type="number" min="0" step="0.1" value="1" required /></label>
+        <label>Priority (1 = highest)<input id="donor-priority" type="number" min="1" max="100" value="1" required /></label>
+        <label class="availability-field"><input id="donor-available" type="checkbox" checked /> Available</label>
+        <div class="form-actions"><button class="primary-button" type="submit" id="save-donor">Add donor</button><button class="text-button hidden" type="button" id="cancel-edit">Cancel edit</button></div>
+      </form>
+      <div class="table-tools"><label class="search-box">⌕ <input id="record-filter" placeholder="Filter by name, ID, blood group or location" /></label><span id="record-count"></span></div>
+      <div class="table-wrap"><table><thead><tr><th>Donor</th><th>Blood group</th><th>Location</th><th>Distance</th><th>Priority</th><th>Status</th><th></th></tr></thead><tbody id="donor-rows"></tbody></table></div>
+      <p class="small-note">This demo saves records in this browser only. Use fictional data; do not enter real contact details.</p>
+    </section>
+
+    <section id="panel-about" class="panel tab-panel hidden">
+      <div class="panel-heading"><div><p class="eyebrow">ALGORITHM WALKTHROUGH</p><h2>From records to ranked matches</h2></div></div>
+      <div class="flow" aria-label="Algorithm workflow"><div><span>01</span><b>Filter</b><small>Compatibility + availability</small></div><i>→</i><div><span>02</span><b>Sort</b><small>Distance, priority or ID</small></div><i>→</i><div><span>03</span><b>Greedy</b><small>Try the top-ranked donors</small></div><i>→</i><div><span>04</span><b>Backtrack</b><small>Try alternatives if needed</small></div></div>
+      <div class="method-grid">
+        <article><span class="method-number">A</span><h3>Compatibility scan</h3><p>Check each record against the red-cell donor compatibility table, then remove unavailable donors.</p><code>O(N)</code></article>
+        <article><span class="method-number">B</span><h3>Priority sort</h3><p>Order eligible donors by the selected rule. The first ranked records become the greedy attempt.</p><code>O(M log M)</code></article>
+        <article><span class="method-number">C</span><h3>Alternative search</h3><p>If the greedy set breaks the one-per-location rule, recursively try other ranked combinations.</p><code>O(2^M) worst case</code></article>
+      </div>
+      <div class="compatibility"><div><p class="eyebrow">SCOPE</p><h3>Red-cell compatibility reference</h3><p>Compatibility is used only to demonstrate matching logic. Hospitals must confirm blood type, crossmatch, donor eligibility, and all clinical decisions.</p></div><div id="compat-table" class="compat-table"></div></div>
+    </section>
+
+    <footer><span>Analysis &amp; Design of Algorithms · 2026</span><span>BloodLink class project <b>♥</b></span></footer>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+
